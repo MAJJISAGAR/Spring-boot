@@ -40,8 +40,8 @@ pipeline {
 
         stage('Docker Login') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                 }
             }
         }
@@ -60,15 +60,15 @@ pipeline {
 
         stage('Update Deployment File') {
             steps {
-                echo 'Updating deployment.yml with new image tag'
+                echo 'Updating deployment.yaml with new image tag'
                 withCredentials([string(credentialsId: 'githubtoken', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         git config user.email "sagarmajji143@gmail.com"
                         git config user.name "MAJJISAGAR"
 
-                        sed -i "s|image:.*|image: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" deploymentfiles/deployment.yml
+                        sed -i "s|image:.*|image: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" deployment.yaml
 
-                        git add deploymentfiles/deployment.yml
+                        git add deployment.yaml
                         git commit -m "Update image to version ${BUILD_NUMBER}" || true
 
                         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
