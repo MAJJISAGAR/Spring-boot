@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "sagar123/devops-app"   
+        DOCKER_IMAGE = "sagar520/devops-app"   
         GIT_REPO_NAME = "Spring-boot"
         GIT_USER_NAME = "MAJJISAGAR"
     }
@@ -65,7 +65,7 @@ pipeline {
                         git config user.email "sagarmajji143@gmail.com"
                         git config user.name "MAJJISAGAR"
 
-                        sed -i "s|devops-app:.*|devops-app: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" deployment.yaml
+                        sed -i "s|image:.*|image: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" deployment.yaml
 
                         git add deployment.yaml
                         git commit -m "Update image to version ${BUILD_NUMBER}" || true
