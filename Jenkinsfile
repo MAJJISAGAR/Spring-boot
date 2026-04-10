@@ -61,7 +61,7 @@ pipeline {
         stage('Update Deployment File') {
             steps {
                 echo 'Updating deployment.yaml with new image tag'
-                withCredentials([string(credentialsId: 'githubtoken', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         git config user.email "sagarmajji143@gmail.com"
                         git config user.name "MAJJISAGAR"
