@@ -28,27 +28,26 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo 'Scanning project with SonarQube'
-                withSonarQubeEnv('MySonarQube') {   
-                    sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.host.url=http://13.220.94.22:9000 \
-                        -Dsonar.login=squ_4bf51a907da6724b12d08c4822be617205f20e9f
-                    '''
-                }
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                }
+                sh 'ls -ltr'  
+                sh '''
+                    mvn sonar:sonar \
+                    -Dsonar.host.url=http://13.220.94.22:9000 \
+                    -Dsonar.login=squ_4bf51a907da6724b12d08c4822be617205f20e9f
+                '''
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $DOCKER_IMAGE:${BUILD_NUMBER} .'
+            }
+        }
+        
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                }
             }
         }
 
@@ -66,7 +65,7 @@ pipeline {
                         git config user.email "sagarmajji143@gmail.com"
                         git config user.name "MAJJISAGAR"
 
-                        sed -i "s|image:.*|image: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" deployment.yaml
+                        sed -i "s|devops-app:.*|devops-app: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" deployment.yaml
 
                         git add deployment.yaml
                         git commit -m "Update image to version ${BUILD_NUMBER}" || true
