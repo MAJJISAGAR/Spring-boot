@@ -31,8 +31,8 @@ pipeline {
                 withSonarQubeEnv('MySonarQube') {   
                     sh '''
                         mvn sonar:sonar \
-                        -Dsonar.projectName=devops-app \
-                        -Dsonar.projectKey=devops-app
+                        -Dsonar.host.url=http://3.236.87.173:9000 \
+                        -Dsonar.login=squ_fbc0c0d2d594e0658de1355b3741ee10bf3b51f1
                     '''
                 }
             }
