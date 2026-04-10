@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: devops-app
-        image: sagar123/devops-app:latest
+        image: sagar520/devops-app:11
         ports:
         - containerPort: 8080
